@@ -41,12 +41,16 @@ def list_assets(folder):
     return image_paths, ids
 
 
-def show_id(evt: gr.SelectData, ids):
-    """顯示點擊圖片後的素材 ID"""
-    idx = evt.index
-    if 0 <= idx < len(ids):
-        return ids[idx]
-    return "❌ 找不到對應的素材"
+def show_id(evt: gr.SelectData, ids, images):
+    """透過圖片檔名比對正確的素材 ID"""
+    try:
+        selected_img = evt.value  # 取得被點選的圖片路徑
+        for path, id_ in zip(images, ids):
+            if os.path.basename(path) == os.path.basename(selected_img):
+                return id_
+        return "❌ 找不到對應的素材"
+    except Exception as e:
+        return f"❌ 錯誤：{e}"
 
 
 # === 分頁邏輯 ===
@@ -56,7 +60,8 @@ def get_page(images, ids, page):
     """回傳指定頁面的圖片與 ID"""
     start = int(page) * PAGE_SIZE
     end = start + PAGE_SIZE
-    return images[start:end], ids[start:end], f"📄 第 {int(page)+1} 頁 / 共 {len(images)//PAGE_SIZE + 1} 頁"
+    total_pages = max(1, (len(images) - 1) // PAGE_SIZE + 1)
+    return images[start:end], ids[start:end], f"📄 第 {int(page)+1} 頁 / 共 {total_pages} 頁"
 
 
 # === 素材資料夾 ===
@@ -91,8 +96,6 @@ def copy_to_clipboard_js():
     }
     """
 
-
-# === 生成素材分頁展示區 ===
 def make_paged_gallery(label, images, ids, default_open=False):
     total_pages = max(1, (len(images) - 1) // PAGE_SIZE + 1)
     init_imgs, init_ids, init_info = get_page(images, ids, 0)
@@ -101,24 +104,53 @@ def make_paged_gallery(label, images, ids, default_open=False):
         with gr.Row():
             page_slider = gr.Slider(0, total_pages - 1, step=1, value=0, label="📖 頁碼", interactive=True)
             page_label = gr.Markdown(init_info)
-        gallery = gr.Gallery(value=init_imgs, columns=6, label=label, interactive=True)
+
+        # 保存當前頁的素材 ID
+        current_ids = gr.State(init_ids)
+        current_images = gr.State(init_imgs)
+
+        gallery = gr.Gallery(
+            value=init_imgs,
+            columns=6,
+            label=label,
+            interactive=True
+        )
+
         with gr.Row():
             id_box = gr.Textbox(label=f"{label} ID", interactive=False)
             copy_btn = gr.Button("📋 複製", variant="secondary")
 
-        # 換頁時更新畫面
+        # 換頁時更新畫面與目前頁面資料
         def update_page(p):
             imgs, ids_page, info = get_page(images, ids, p)
-            return imgs, gr.State(ids_page), info
+            return imgs, ids_page, imgs, info
 
         page_slider.change(
             fn=update_page,
             inputs=page_slider,
-            outputs=[gallery, gr.State(), page_label]
+            outputs=[gallery, current_ids, current_images, page_label]
         )
 
-        # 點擊圖片時顯示 ID
-        gallery.select(fn=show_id, inputs=gr.State(init_ids), outputs=id_box)
+        # 點擊圖片時顯示對應 ID
+        def show_id(evt: gr.SelectData, ids_page, imgs_page):
+            try:
+                # Gradio 有時返回 dict，有時返回路徑字串
+                selected_img = evt.value
+                if isinstance(selected_img, dict):
+                    # 若是 dict（base64 圖片），嘗試比對 index
+                    index = evt.index[0] if isinstance(evt.index, (list, tuple)) else evt.index
+                    return ids_page[index] if 0 <= index < len(ids_page) else "❌ 找不到素材 ID"
+                else:
+                    # 若是路徑字串則用名稱比對
+                    selected_filename = os.path.basename(selected_img)
+                    for path, id_ in zip(imgs_page, ids_page):
+                        if os.path.basename(path) == selected_filename:
+                            return id_
+                    return "❌ 找不到對應的素材 ID"
+            except Exception as e:
+                return f"❌ 錯誤：{e}"
+
+        gallery.select(fn=show_id, inputs=[current_ids, current_images], outputs=id_box)
 
         # 複製按鈕
         copy_btn.click(None, inputs=id_box, outputs=None, js=copy_to_clipboard_js())
@@ -133,12 +165,12 @@ with gr.Blocks(title="🎴 Maimai 玩家卡片生成器") as demo:
         with gr.TabItem("🎴 卡片生成"):
             with gr.Row():
                 with gr.Column():
-                    nickname = gr.Textbox(label="玩家名稱", value=" ")
+                    nickname = gr.Textbox(label="玩家名稱", value="Natsuki")
                     title = gr.Textbox(label="稱號", value="WIREPULLER")
                     titleRare = gr.Dropdown(["Normal", "Bronze", "Silver", "Gold", "Rainbow"], label="稱號稀有度", value="Rainbow")
                     rating = gr.Number(label="Rating", value=99999)
-                    classRank = gr.Number(label="友人對戰等級", value=25)
-                    courseRank = gr.Number(label="段位認定等級", value=23)
+                    classRank = gr.Number(label="友人對戰等級", value=1)
+                    courseRank = gr.Number(label="段位認定等級", value=1)
 
                 with gr.Column():
                     icon = gr.Textbox(label="頭像ID", value="458025")

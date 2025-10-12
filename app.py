@@ -49,7 +49,17 @@ def show_id(evt: gr.SelectData, ids):
     return "❌ 找不到對應的素材"
 
 
-# 設定素材目錄
+# === 分頁邏輯 ===
+PAGE_SIZE = 24  # 每頁顯示 24 張，可自行調整
+
+def get_page(images, ids, page):
+    """回傳指定頁面的圖片與 ID"""
+    start = int(page) * PAGE_SIZE
+    end = start + PAGE_SIZE
+    return images[start:end], ids[start:end], f"📄 第 {int(page)+1} 頁 / 共 {len(images)//PAGE_SIZE + 1} 頁"
+
+
+# === 素材資料夾 ===
 BASE_PATH = os.path.join(os.getcwd(), "res", "images")
 CHARA_PATH = os.path.join(BASE_PATH, "Chara")
 ICON_PATH = os.path.join(BASE_PATH, "Icon")
@@ -60,6 +70,58 @@ chara_images, chara_ids = list_assets(CHARA_PATH)
 icon_images, icon_ids = list_assets(ICON_PATH)
 frame_images, frame_ids = list_assets(FRAME_PATH)
 plate_images, plate_ids = list_assets(PLATE_PATH)
+
+
+# === JS 複製功能 ===
+def copy_to_clipboard_js():
+    return """
+    async (text) => {
+        try {
+            const match = text.match(/\\d+/g);
+            const pureId = match ? match.join('') : text;
+            if (!pureId) {
+                alert('⚠️ 無法識別有效的數字 ID');
+                return;
+            }
+            await navigator.clipboard.writeText(pureId);
+            alert('✅ 已複製 ID：' + pureId);
+        } catch (err) {
+            alert('❌ 無法複製：' + err);
+        }
+    }
+    """
+
+
+# === 生成素材分頁展示區 ===
+def make_paged_gallery(label, images, ids, default_open=False):
+    total_pages = max(1, (len(images) - 1) // PAGE_SIZE + 1)
+    init_imgs, init_ids, init_info = get_page(images, ids, 0)
+
+    with gr.Accordion(f"{label} 素材", open=default_open):
+        with gr.Row():
+            page_slider = gr.Slider(0, total_pages - 1, step=1, value=0, label="📖 頁碼", interactive=True)
+            page_label = gr.Markdown(init_info)
+        gallery = gr.Gallery(value=init_imgs, columns=6, label=label, interactive=True)
+        with gr.Row():
+            id_box = gr.Textbox(label=f"{label} ID", interactive=False)
+            copy_btn = gr.Button("📋 複製", variant="secondary")
+
+        # 換頁時更新畫面
+        def update_page(p):
+            imgs, ids_page, info = get_page(images, ids, p)
+            return imgs, gr.State(ids_page), info
+
+        page_slider.change(
+            fn=update_page,
+            inputs=page_slider,
+            outputs=[gallery, gr.State(), page_label]
+        )
+
+        # 點擊圖片時顯示 ID
+        gallery.select(fn=show_id, inputs=gr.State(init_ids), outputs=id_box)
+
+        # 複製按鈕
+        copy_btn.click(None, inputs=id_box, outputs=None, js=copy_to_clipboard_js())
 
 
 # === 主介面 ===
@@ -97,41 +159,11 @@ with gr.Blocks(title="🎴 Maimai 玩家卡片生成器") as demo:
         # === 頁籤 2：素材庫展示 ===
         with gr.TabItem("🖼 素材庫展示"):
             gr.Markdown("點擊任意圖片以顯示素材 ID，可複製到上方頁面使用。")
+            make_paged_gallery("角色", chara_images, chara_ids, default_open=True)
+            make_paged_gallery("頭像", icon_images, icon_ids)
+            make_paged_gallery("背景", frame_images, frame_ids)
+            make_paged_gallery("姓名框", plate_images, plate_ids)
 
-            # JS function：複製純數字部分
-            def copy_to_clipboard_js():
-                return """
-                async (text) => {
-                    try {
-                        // 僅擷取數字部分
-                        const match = text.match(/\\d+/g);
-                        const pureId = match ? match.join('') : text;
-                        if (!pureId) {
-                            alert('⚠️ 無法識別有效的數字 ID');
-                            return;
-                        }
-                        await navigator.clipboard.writeText(pureId);
-                        alert('✅ 已複製 ID：' + pureId);
-                    } catch (err) {
-                        alert('❌ 無法複製：' + err);
-                    }
-                }
-                """
-
-            # 建立素材展示區塊
-            def make_asset_section(label, images, ids):
-                with gr.Accordion(f"{label} 素材", open=(label == "角色")):
-                    gallery = gr.Gallery(value=images, columns=6, label=label, interactive=True)
-                    with gr.Row():
-                        id_box = gr.Textbox(label=f"{label} ID", interactive=False)
-                        copy_btn = gr.Button("📋 複製", variant="secondary")
-                    gallery.select(fn=show_id, inputs=gr.State(ids), outputs=id_box)
-                    copy_btn.click(None, inputs=id_box, outputs=None, js=copy_to_clipboard_js())
-
-            make_asset_section("角色", chara_images, chara_ids)
-            make_asset_section("頭像", icon_images, icon_ids)
-            make_asset_section("背景", frame_images, frame_ids)
-            make_asset_section("姓名框", plate_images, plate_ids)
 
 if __name__ == "__main__":
     demo.launch()

@@ -28,7 +28,7 @@ def generate_card(nickname, title, icon, frame, plate, rating, classRank, course
         return f"❌ 發生錯誤：{e}"
 
 with gr.Blocks(title="🎴 Maimai 玩家卡片生成器") as demo:
-    gr.Markdown("# 🎨 Maimai 玩家卡片生成器\n輸入角色與分數資料，即可生成卡片圖片")
+    gr.Markdown("# 🎨 Maimai 玩家卡片生成器\n輸入角色與分數資料，即可生成卡片圖片 原作者https://github.com/HoshinoStarry")
 
     with gr.Row():
         with gr.Column():

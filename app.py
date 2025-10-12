@@ -54,7 +54,7 @@ def show_id(evt: gr.SelectData, ids, images):
 
 
 # === 分頁邏輯 ===
-PAGE_SIZE = 24  # 每頁顯示 24 張，可自行調整
+PAGE_SIZE = 20  # 每頁顯示 24 張，可自行調整
 
 def get_page(images, ids, page):
     """回傳指定頁面的圖片與 ID"""

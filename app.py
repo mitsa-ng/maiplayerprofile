@@ -173,10 +173,10 @@ with gr.Blocks(title="🎴 Maimai 玩家卡片生成器") as demo:
                     courseRank = gr.Number(label="段位認定等級", value=23)
 
                 with gr.Column():
-                    icon = gr.Textbox(label="頭像ID", value="458025")
-                    frame = gr.Textbox(label="背景框ID", value="309102")
-                    plate = gr.Textbox(label="姓名框ID", value="458014")
-                    chara = gr.Textbox(label="旅行夥伴ID (用逗號分隔)", value="350103,200105,150104,150106,000302")
+                    icon = gr.Textbox(label="頭像ID,只能有數字喔!", value="458025")
+                    frame = gr.Textbox(label="背景框ID,只能有數字喔!,只能有數字喔!", value="309102")
+                    plate = gr.Textbox(label="姓名框ID,只能有數字喔!", value="458014")
+                    chara = gr.Textbox(label="旅行夥伴ID,只能有數字喔! (用逗號分隔)", value="350103,200105,150104,150106,000302")
                     charaLevel = gr.Textbox(label="旅行夥伴等級 (用逗號分隔)", value="9999,9999,9999,9999,9999")
 
             btn = gr.Button("✨ 生成卡片")

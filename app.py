@@ -137,8 +137,8 @@ with gr.Blocks(title="🎴 Maimai 玩家卡片生成器") as demo:
                     title = gr.Textbox(label="稱號", value="WIREPULLER")
                     titleRare = gr.Dropdown(["Normal", "Bronze", "Silver", "Gold", "Rainbow"], label="稱號稀有度", value="Rainbow")
                     rating = gr.Number(label="Rating", value=99999)
-                    classRank = gr.Number(label="友人對戰等級", value=1)
-                    courseRank = gr.Number(label="段位認定等級", value=1)
+                    classRank = gr.Number(label="友人對戰等級", value=25)
+                    courseRank = gr.Number(label="段位認定等級", value=23)
 
                 with gr.Column():
                     icon = gr.Textbox(label="頭像ID", value="458025")

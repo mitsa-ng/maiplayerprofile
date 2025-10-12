@@ -33,3 +33,11 @@ saved_model/**/* filter=lfs diff=lfs merge=lfs -text
 *.zip filter=lfs diff=lfs merge=lfs -text
 *.zst filter=lfs diff=lfs merge=lfs -text
 *tfevents* filter=lfs diff=lfs merge=lfs -text
+res/material/adobe_simhei.otf filter=lfs diff=lfs merge=lfs -text
+res/material/GenSenMaruGothicTW-Bold.ttf filter=lfs diff=lfs merge=lfs -text
+res/material/GenSenMaruGothicTW-ExtraLight.ttf filter=lfs diff=lfs merge=lfs -text
+res/material/GenSenMaruGothicTW-Heavy.ttf filter=lfs diff=lfs merge=lfs -text
+res/material/GenSenMaruGothicTW-Light.ttf filter=lfs diff=lfs merge=lfs -text
+res/material/GenSenMaruGothicTW-Medium.ttf filter=lfs diff=lfs merge=lfs -text
+res/material/GenSenMaruGothicTW-Regular.ttf filter=lfs diff=lfs merge=lfs -text
+res/material/STHUPO.TTF filter=lfs diff=lfs merge=lfs -text

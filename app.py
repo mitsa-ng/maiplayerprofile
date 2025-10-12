@@ -165,7 +165,7 @@ with gr.Blocks(title="🎴 Maimai 玩家卡片生成器") as demo:
         with gr.TabItem("🎴 卡片生成"):
             with gr.Row():
                 with gr.Column():
-                    nickname = gr.Textbox(label="玩家名稱", value="Natsuki")
+                    nickname = gr.Textbox(label="玩家名稱", value=" ")
                     title = gr.Textbox(label="稱號", value="WIREPULLER")
                     titleRare = gr.Dropdown(["Normal", "Bronze", "Silver", "Gold", "Rainbow"], label="稱號稀有度", value="Rainbow")
                     rating = gr.Number(label="Rating", value=99999)

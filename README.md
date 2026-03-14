@@ -53,7 +53,34 @@ python app.py
 
 Then open the local Gradio URL shown in your terminal.
 
-## 📁 Project structure
+## � Publish to GitHub (optional)
+
+If you'd like to keep your work backed up and share it publicly:
+
+1. Create a new repository on GitHub (e.g., `maiPlayerProfile`).
+2. In your project folder, add a remote (skip if one already exists):
+
+```bash
+git remote add origin https://github.com/<your-username>/<repo-name>.git
+```
+
+3. Push your code:
+
+```bash
+git add .
+git commit -m "Initial commit"
+git push -u origin main
+```
+
+✅ After this, future updates can be pushed with:
+
+```bash
+git push
+```
+
+> Tip: If you already have a remote configured (e.g., `origin` or `nati`), you can push directly using that remote instead.
+
+## �📁 Project structure
 
 - `app.py` – Gradio UI and main app logic
 - `main.py` – card generation logic (image composition)

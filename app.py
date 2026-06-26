@@ -537,4 +537,4 @@ with gr.Blocks(
 
 
 if __name__ == "__main__":
-    demo.launch(show_api=False, share=False, server_port=7861)
+    demo.launch(show_api=False, share=False)

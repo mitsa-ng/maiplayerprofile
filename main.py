@@ -365,13 +365,14 @@ def call_user_img(user_data, no_chara=False):
     network_status_img = Image.open(rf"{maimaiImgPath}/network/on.png")
     img.paste(network_status_img, (1014, 25), network_status_img)
 
-    if not no_chara:
-        main_chara = drawCharaImgNewMain(user_data["chara"][0], user_data["charaLevel"][0]).resize((309, 309))
+    if not no_chara and len(user_data["chara"]) > 0:
+        chara_data = list(zip(user_data["chara"], user_data["charaLevel"]))[:5]
+        main_chara = drawCharaImgNewMain(chara_data[0][0], chara_data[0][1]).resize((309, 309))
         img.paste(main_chara, (-36, 143), main_chara)
         chara_start_x = 204
         chara_start_y = 170
-        for chara in zip(user_data["chara"][1:], user_data["charaLevel"][1:]):
-            chara_img = drawCharaImgNewSub(*chara).resize((147, 290))
+        for chara_id, chara_lv in chara_data[1:]:
+            chara_img = drawCharaImgNewSub(chara_id, chara_lv).resize((147, 290))
             img.paste(chara_img, (chara_start_x, chara_start_y), chara_img)
             chara_start_x += 138
 

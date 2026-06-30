@@ -186,15 +186,15 @@ def generate_card(nickname, title, icon, frame, plate, rating, classRank, course
 
     try:
         chara_list = [int(x.strip()) for x in chara.split(",") if x.strip()]
-        if len(chara_list) != 5:
-            errors.append(f"旅行夥伴需要 5 個 ID，目前有 {len(chara_list)} 個")
+        if len(chara_list) > 5:
+            errors.append(f"旅行夥伴最多 5 個 ID，目前有 {len(chara_list)} 個")
     except ValueError:
         errors.append("旅行夥伴 ID 格式錯誤，請用逗號分隔純數字")
 
     try:
         chara_level_list = [int(x.strip()) for x in charaLevel.split(",") if x.strip()]
-        if len(chara_level_list) != 5:
-            errors.append(f"旅行夥伴等級需要 5 個，目前有 {len(chara_level_list)} 個")
+        if len(chara_level_list) > 5:
+            errors.append(f"旅行夥伴等級最多 5 個，目前有 {len(chara_level_list)} 個")
     except ValueError:
         errors.append("旅行夥伴等級格式錯誤，請用逗號分隔純數字")
 
@@ -464,11 +464,11 @@ with gr.Blocks(
                     with gr.Group(elem_classes="form-card"):
                         gr.Markdown("### 🎭 旅行夥伴", elem_classes="section-title")
                         chara = gr.Textbox(
-                            label="角色 ID（用逗號分隔 5 個，如 350103,200105,150104,150106,000302）",
+                            label="角色 ID（用逗號分隔，最多 5 個，如 350103,200105,150104,150106,000302）",
                             value="350103,200105,150104,150106,000302",
                         )
                         charaLevel = gr.Textbox(
-                            label="角色等級（用逗號分隔 5 個，範圍 1-9999）",
+                            label="角色等級（用逗號分隔，最多 5 個，範圍 1-9999）",
                             value="9999,9999,9999,9999,9999",
                         )
 

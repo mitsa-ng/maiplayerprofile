@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="zh-Hant-TW">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="light dark" />
+    <meta name="description" content="maimai 玩家名片產生器：選素材、填資料，即時預覽並下載個人資料卡。" />
+    <title>🎴 maimai 名片產生器</title>
+    <script>
+      // 阻塞式套用主題，避免深色模式使用者看到白色閃屏（FOUC）
+      (function () {
+        try {
+          var t = localStorage.getItem("maicard.theme");
+          if (!t) t = matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+          if (t === "dark") document.documentElement.classList.add("dark");
+        } catch (e) {}
+      })();
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

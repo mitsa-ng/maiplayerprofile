@@ -34,3 +34,12 @@ dist/
 
 # Others
 *.swp
+
+# React 前端建置產物與縮圖快取
+web/
+.cache/
+frontend/node_modules/
+frontend/dist/
+
+# 本機 agent 產物
+.zcode/
